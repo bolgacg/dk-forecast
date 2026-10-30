@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Denmark Forecast Study</title>
+<meta name="description" content="Bolgaç Gülen's own weather model for Denmark, tested once on 2026 against ECMWF, DMI, yr.no and every public model, and fed into a wind power forecast that beats Energinet's.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{--paper:#faf9f7;--ink:#1a1d21;--soft:#5b6470;--faint:#8b95a1;--rule:#e2e0dc;--ours:#c2410c;--ref:#2a78d6;--bar:#c9cfd6;--panel:#f3f1ed;--serif:'Newsreader',Georgia,serif;--sans:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans)}
+.wrap{max-width:860px;margin:0 auto;padding:28px 16px 60px}
+h1{font:600 clamp(30px,6vw,46px)/1.1 var(--serif);margin:0 0 10px;letter-spacing:-.01em}
+.by{color:var(--soft);font-size:15px;margin:0 0 18px}
+.lead{font:400 20px/1.5 var(--serif);margin:0 0 22px}
+h2{font:600 26px/1.2 var(--serif);margin:46px 0 8px}h2 .n{color:var(--ours);margin-right:8px}
+p{margin:0 0 12px;text-align:justify;hyphens:auto}
+.ans{font:500 18px/1.5 var(--sans);margin:0 0 14px;text-align:left}.ans b{color:var(--ours)}
+.card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:16px;margin:14px 0}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--panel);border-radius:999px;padding:4px;margin:0 6px 8px 0}
+.seg button{font:500 14px var(--sans);border:0;background:none;padding:7px 14px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--ink);color:#fff}.seg button:disabled{opacity:.35;cursor:default}
+.map-wrap{position:relative;width:100%;aspect-ratio:1.118;border-radius:12px;overflow:hidden;background:#dfe7ee}
+.map-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.play{font:500 14px var(--sans);padding:6px 14px;border:1px solid var(--rule);border-radius:999px;background:#fff;cursor:pointer}
+input[type=range]{flex:1;min-width:120px}.readout{font:13px var(--mono);color:var(--soft)}
+.legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft);margin-top:8px;flex-wrap:wrap}.legend .bar{height:10px;width:160px;border-radius:5px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font:12px/1.45 var(--mono);padding:6px 9px;border-radius:7px;display:none;z-index:5;white-space:nowrap}
+#gtip{position:fixed}
+.cap{font-size:13px;color:var(--soft);text-align:left}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.kpi{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:12px 14px}.kpi b{display:block;font:600 28px/1.1 var(--serif);color:var(--ours)}.kpi span{font-size:14px;color:var(--soft)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}.steps li{counter-increment:s;padding:10px 0 10px 44px;position:relative;border-top:1px solid var(--rule)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:10px;width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;font:600 15px/30px var(--sans);text-align:center}
+figure{margin:14px 0}figure img{width:100%;border-radius:10px;border:1px solid var(--rule)}figcaption{font-size:13px;color:var(--soft);margin-top:6px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.two .card{margin:0;display:flex;flex-direction:column}.two .card h3{font:600 19px var(--serif);margin:0 0 6px}.two .card p{font-size:15px;text-align:left}
+.btn{display:inline-block;margin-top:auto;padding:9px 16px;border-radius:999px;background:var(--ink);color:#fff;text-decoration:none;font:500 14px var(--sans);align-self:flex-start}
+svg{display:block;width:100%;height:auto}a{color:var(--ref)}
+footer{margin-top:44px;border-top:1px solid var(--rule);padding-top:14px;font-size:14px;color:var(--soft)}
+</style>
+</head>
+<body><div class="wrap">
+<h1>Can one person forecast Danish weather better than the big public models?</h1>
+<p class="by">Bolgaç Gülen, October 2026</p>
+<p class="lead">I built my own weather model for Denmark, DKcast, and tested it once on 2026, ten months it had never seen. It beat ECMWF, DMI, yr.no and every other public model on wind, temperature, sunshine and rain. Fed into a wind power forecast, it beat Energinet's day-ahead forecast too.</p>
+
+<div class="card">
+ <div class="map-wrap" id="mapwrap"><canvas id="field"></canvas><canvas id="parts"></canvas><canvas id="over"></canvas><div class="tip" id="tip"></div></div>
+ <div class="controls"><div class="seg" id="src"><button data-k="era5" class="on">What happened</button><button data-k="ifs">ECMWF IFS</button><button data-k="aifs">ECMWF AIFS (AI)</button><button data-k="knmi">KNMI HARMONIE</button></div></div>
+ <div class="controls"><button class="play" id="play">Pause</button><input type="range" id="t" min="0" max="71" value="30" aria-label="Hour"><span class="readout" id="when"></span></div>
+ <div class="legend"><span>0</span><span class="bar" id="lbar"></span><span>28 m/s wind at 100 m, the height of a turbine hub</span><span>lines: sea level pressure</span></div>
+ <p class="cap" style="margin:8px 0 0">The Easter storm, 5 April 2026. "What happened" is ERA5, ECMWF's replay of past weather. The others are the forecasts issued the day before. Hover for exact values.</p>
+</div>
+
+<h2><span class="n">1</span>How much better than the public models?</h2>
+<p class="ans" id="ans1"></p>
+<div class="seg" id="mode"><button data-m="weather" class="on">Weather</button><button data-m="energy">Energy</button></div>
+<div class="seg" id="var"><button data-v="wind" class="on">Wind</button><button data-v="temp">Temperature</button><button data-v="sun">Sunshine</button><button data-v="rain">Rain</button></div>
+<div class="card"><svg id="bars"></svg><p class="cap" id="barcap" style="margin:6px 0 0"></p></div>
+
+<h2><span class="n">2</span>And against yr.no and DMI?</h2>
+<p class="ans">DKcast had <b>16 to 28% less error than yr.no's forecast</b> and <b>18 to 33% less than DMI's HARMONIE</b>, each given its own correction per station first.</p>
+<div class="grid" id="kpis"></div>
+<p class="cap">yr.no is MET Norway's 1 km post-processed forecast as issued (the MET Nordic archive). It has no sunshine forecast, so sunshine is compared with DMI only. Error is the typical miss at the DMI station, on the same hours for every model.</p>
+
+<h2><span class="n">3</span>How did I do it?</h2>
+<p class="ans">By not choosing a model: DKcast reads all of them at once and learns, station by station, which one to trust in which weather.</p>
+<ol class="steps">
+<li><b>Every public model as input.</b> 12 forecasts issued the day before, from ECMWF, DWD, DMI, KNMI, MET Norway, the UK Met Office, NOAA and others, at every DMI weather station.</li>
+<li><b>Real measurements as the answer key.</b> The target is what DMI's stations measured, not a model's replay of the weather, so the model learns the local errors of each site.</li>
+<li><b>A forecast with a range.</b> A small neural network (a distributional regression network, after Rasp and Lerch, 2018) predicts a correction to the models' average and how uncertain it is, trained on March to December 2025.</li>
+<li><b>Tested once.</b> The test script was frozen and published before it ran on 1 January to 18 October 2026, and every public model got the same per-station correction, so the comparison is fair to them.</li>
+</ol>
+
+<h2><span class="n">4</span>The gusts were right, the electricity was not</h2>
+<p class="ans">The worst days were not weather misses.</p>
+<p>On Easter Sunday and Monday 2026 the forecast had the wind right. But demand was low on the holiday, the day-ahead price went negative, and wind farms were switched off: eastern Denmark's output fell to about 30% of capacity in the middle of a gale. The weather was right, and the power was wrong. That lesson is now part of the energy model, which allows for wind farms being switched off.</p>
+<figure><img src="data/fig_easter_DK2.png" alt="Eastern Denmark wind output 3 to 7 April 2026: the forecast stays near 85% of capacity while actual output drops to 30% during hours with negative prices."><figcaption>Eastern Denmark (DK2) wind output, 3 to 7 April 2026, against the forecast and its 10 to 90% band. Shaded hours had a negative day-ahead price.</figcaption></figure>
+
+<h2><span class="n">5</span>Can it predict tomorrow?</h2>
+<p class="ans">Yes, every day, in public, so you can check it yourself.</p>
+<div class="two">
+ <div class="card"><h3>DKcast weather</h3><p id="dkc">Tomorrow's hourly temperature, sunshine, rain and wind at 21 Danish weather stations, with a map, a town search and yesterday's forecast checked against what DMI measured.</p><a class="btn" href="https://bolgacg.github.io/dkcast/">Open DKcast</a></div>
+ <div class="card"><h3>Live wind power league</h3><p id="livep">Every morning before the noon market close, my wind power forecast is published next to Energinet's and the public models', and ranked once the day has been measured.</p><svg id="live" viewBox="0 0 400 150" aria-label="Today's wind power forecast and measured output"></svg><a class="btn" href="https://bolgacg.github.io/dk-wind-live/">Open the live league</a></div>
+</div>
+
+<footer>Full study, with storm anatomy, error maps and the uncertainty check: <a href="https://bolgacg.github.io/dk-wind-blend/">Denmark wind and weather study</a> and <a href="https://bolgacg.github.io/dk-wind-blend/denmark-wind-model-study.pdf">PDF</a>. Code: <a href="https://github.com/bolgacg/dk-wind-blend">github.com/bolgacg/dk-wind-blend</a>. Data: Open-Meteo (public model forecasts), DMI open data (measurements), MET Norway thredds (yr.no archive), Energinet (power), ECMWF ERA5.</footer>
+</div>
+<div class="tip" id="gtip"></div>
+<script>
+const $=s=>document.querySelector(s),NS="http://www.w3.org/2000/svg";
+function el(n,a,p,t){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;p&&p.appendChild(e);return e}
+const G=$("#gtip");function tipOn(e,html){G.innerHTML=html;G.style.display="block";G.style.left=Math.min(e.clientX+12,innerWidth-G.offsetWidth-8)+"px";G.style.top=(e.clientY-G.offsetHeight-10)+"px"}
+function tipOff(){G.style.display="none"}
+// ---------- 1. results bars with weather / energy toggle
+const ENERGY={unit:"% of capacity",metric:"error, % of installed capacity",rows:[{name:"My power model, fed by DKcast",val:5.56,ours:true},{name:"4-model average (my first model)",val:6.24},{name:"ECMWF IFS",val:6.60},{name:"Energinet day-ahead",val:6.68}]};
+const VN={wind:"wind speed",temp:"temperature",sun:"sunshine",rain:"rain (will it rain this hour?)"};
+let W=null,mode="weather",v="wind";
+function bars(){const B=$("#bars");B.innerHTML="";const d=mode=="energy"?ENERGY:W[v],rows=d.rows,max=Math.max(...rows.map(r=>r.val))*1.12,sm=B.parentNode.clientWidth<560,VW=sm?380:640,L=sm?150:200,R=VW-60,h=30;
+ B.setAttribute("viewBox",`0 0 ${VW} ${rows.length*h+10}`);
+ rows.forEach((r,i)=>{const y=6+i*h,ref=r.name=="ECMWF IFS",c=r.ours||r.name=="DKcast"?"var(--ours)":ref?"var(--ref)":"var(--bar)",w=(R-L)*r.val/max;
+  el("text",{x:L-10,y:y+17,"font-size":sm?12:14,"text-anchor":"end",fill:"#1a1d21","font-weight":r.ours||r.name=="DKcast"||ref?600:400},B,r.name);
+  const b=el("rect",{x:L,y:y+3,width:w,height:20,rx:4,fill:c},B);
+  el("text",{x:L+w+5,y:y+18,"font-size":sm?11:13,fill:"#5b6470","font-family":"IBM Plex Mono"},B,(d.unit=="Brier"?r.val.toFixed(3):r.val.toFixed(2))+(d.unit=="Brier"||sm?"":" "+d.unit));
+  b.addEventListener("pointermove",e=>tipOn(e,`${r.name}<br>${d.metric}: ${d.unit=="Brier"?r.val.toFixed(4):r.val.toFixed(3)+" "+d.unit}`));b.addEventListener("pointerleave",tipOff)});
+ const dk=rows[0].val,ifs=rows.find(r=>r.name=="ECMWF IFS").val,best=rows.filter(r=>!(r.ours||r.name=="DKcast"))[0];
+ if(mode=="energy"){$("#ans1").innerHTML=`On wind power, my model had <b>17% less error than Energinet's day-ahead forecast</b> and 16% less than ECMWF IFS, over 290 days of 2026, and beat Energinet on 76% of the days.`;
+  $("#barcap").textContent="Average hourly error of Denmark's wind power output (both price areas), 1 January to 18 October 2026, as % of installed capacity. Western Denmark 5.27% against Energinet's 6.19%, eastern Denmark 6.47% against 8.27%. In money, at the real imbalance prices, the error cost 3.01 EUR per MWh against Energinet's 3.33.";}
+ else{$("#ans1").innerHTML=`On ${VN[v]}, DKcast had <b>${(100*(1-dk/best.val)).toFixed(0)}% less error than the best public option</b> (${best.name}) and ${(100*(1-dk/ifs)).toFixed(0)}% less than ECMWF IFS.`;
+  $("#barcap").textContent=(v=="rain"?"Brier score of the chance of rain (0.2 mm or more in the hour): lower is better. ":"Typical hourly miss (root mean square error) at DMI stations. ")+"Every public model is given its own correction per station first. 1 January to 18 October 2026, hours DKcast never saw.";}
+ $("#var").style.display=mode=="energy"?"none":"inline-flex"}
+$("#mode").onclick=e=>{const b=e.target.closest("button");if(!b)return;mode=b.dataset.m;document.querySelectorAll("#mode button").forEach(x=>x.classList.toggle("on",x==b));bars()};
+$("#var").onclick=e=>{const b=e.target.closest("button");if(!b)return;v=b.dataset.v;document.querySelectorAll("#var button").forEach(x=>x.classList.toggle("on",x==b));bars()};
+fetch("data/weather.json").then(r=>r.json()).then(d=>{W=d;bars();
+ const k=(vv,who)=>{const r=Object.fromEntries(d[vv].rows.map(x=>[x.name,x.val]));return r[who]?Math.round(100*(1-r.DKcast/r[who])):null};
+ const items=[["wind","yr.no (MET Nordic)","wind, against yr.no"],["temp","yr.no (MET Nordic)","temperature, against yr.no"],["rain","yr.no (MET Nordic)","rain, against yr.no"],["wind","DMI HARMONIE","wind, against DMI"],["temp","DMI HARMONIE","temperature, against DMI"],["sun","DMI HARMONIE","sunshine, against DMI"],["rain","DMI HARMONIE","rain, against DMI"]];
+ $("#kpis").innerHTML=items.map(([vv,w,l])=>`<div class="kpi"><b>${k(vv,w)}%</b><span>less error on ${l}</span></div>`).join("")});
+// ---------- 5. live league mini chart (published by the live page)
+fetch("https://bolgacg.github.io/dk-wind-live/summary.json").then(r=>r.json()).then(s=>{const t=s.today,S=$("#live");if(!t||!t.series)return;
+ const ser=t.series,ps=ser.map(x=>x.p).filter(x=>x!=null),as=ser.map(x=>x.a).filter(x=>x!=null),mx=Math.max(...ps,...as,1)*1.1,n=ser.length-1;
+ const X=i=>30+i*(360/n),Y=v=>130-v/mx*115;
+ el("line",{x1:30,x2:390,y1:130,y2:130,stroke:"#e2e0dc"},S);
+ el("path",{d:"M"+ser.map((x,i)=>x.p==null?"":X(i)+","+Y(x.p)).filter(Boolean).join("L"),fill:"none",stroke:"#c2410c","stroke-width":2.5},S);
+ ser.forEach((x,i)=>{if(x.a!=null)el("circle",{cx:X(i),cy:Y(x.a),r:3,fill:"#1a1d21"},S);const r=el("rect",{x:X(i)-180/n,y:0,width:360/n,height:140,fill:"transparent"},S);
+  r.addEventListener("pointermove",e=>tipOn(e,`${x.t.slice(11)}:00 UTC<br>forecast ${x.p!=null?x.p.toLocaleString("en-GB")+" MW":"n/a"}<br>measured ${x.a!=null?x.a.toLocaleString("en-GB")+" MW":"not yet"}`));r.addEventListener("pointerleave",tipOff)});
+ el("text",{x:30,y:146,"font-size":11,fill:"#5b6470"},S,`${t.day}: ${t.line_name} (line), measured (dots), ${t.hours_measured} of ${t.hours_total} hours so far`)}).catch(()=>{});
+// ---------- storm map (from the study page)
+const CMAP=[[0,[255,255,229]],[4,[237,248,177]],[8,[199,233,180]],[12,[127,205,187]],[16,[65,182,196]],[20,[29,145,192]],[24,[34,94,168]],[28,[37,52,148]]];
+function col(v){for(let i=1;i<CMAP.length;i++){if(v<=CMAP[i][0]){const [a,ca]=CMAP[i-1],[b,cb]=CMAP[i],t=(v-a)/(b-a);return ca.map((c,j)=>Math.round(c+t*(cb[j]-c)))}}return CMAP[CMAP.length-1][1]}
+$('#lbar').style.background='linear-gradient(90deg,'+CMAP.map(([v,c])=>`rgb(${c}) ${v/28*100}%`).join(',')+')';
+let coast=null,storm=null,K='era5',T=30,playing=true,MW=0,MH=0,dpr=1,parts=[];
+const LON0=6,LON1=16,LAT0=53.5,LAT1=58.5;const fx=lon=>(lon-LON0)/(LON1-LON0)*MW,fy=lat=>(LAT1-lat)/(LAT1-LAT0)*MH;
+function data(){return storm&&storm[K]?storm:null}
+function sample(arr,lon,lat,m){const nx=m.lon.length,ny=m.lat.length,x=(lon-m.lon[0])/0.5,y=(lat-m.lat[0])/0.5;if(x<0||y<0||x>nx-1||y>ny-1)return null;
+ const i=Math.min(Math.floor(x),nx-2),j=Math.min(Math.floor(y),ny-2),a=x-i,b=y-j,g=(jj,ii)=>arr[jj*nx+ii];return (1-a)*(1-b)*g(j,i)+a*(1-b)*g(j,i+1)+(1-a)*b*g(j+1,i)+a*b*g(j+1,i+1)}
+function resize(){const r=$('#mapwrap').getBoundingClientRect();dpr=window.devicePixelRatio||1;MW=r.width;MH=r.height;
+ for(const id of ['field','parts','over']){const c=document.getElementById(id);c.width=MW*dpr;c.height=MH*dpr;c.getContext('2d').setTransform(dpr,0,0,dpr,0,0)}seed();draw()}
+function seed(){parts=[];const n=Math.round(MW*MH/420);for(let i=0;i<n;i++)parts.push(rnd())}
+function rnd(){return{lon:LON0+Math.random()*(LON1-LON0),lat:LAT0+Math.random()*(LAT1-LAT0),age:Math.floor(Math.random()*80)}}
+function drawField(){const d=data(),ctx=$('#field').getContext('2d');ctx.clearRect(0,0,MW,MH);if(!d)return;
+ const m=d.meta,u=d[K].u[T],v=d[K].v[T],gw=160,gh=Math.round(160/1.118),img=ctx.createImageData(gw,gh);
+ for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const lon=LON0+(x+.5)/gw*(LON1-LON0),lat=LAT1-(y+.5)/gh*(LAT1-LAT0),c=col(Math.hypot(sample(u,lon,lat,m),sample(v,lon,lat,m)));img.data.set([...c,255],(y*gw+x)*4)}
+ const off=document.createElement('canvas');off.width=gw;off.height=gh;off.getContext('2d').putImageData(img,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(off,0,0,MW,MH)}
+function drawOver(){const d=data(),ctx=$('#over').getContext('2d');ctx.clearRect(0,0,MW,MH);
+ if(coast){ctx.strokeStyle='rgba(31,41,51,.85)';ctx.lineWidth=0.9;ctx.fillStyle='rgba(255,255,255,.22)';for(const r of coast){ctx.beginPath();r.forEach(([x,y],i)=>i?ctx.lineTo(fx(x),fy(y)):ctx.moveTo(fx(x),fy(y)));ctx.closePath();ctx.fill();ctx.stroke()}}
+ if(!d)return;const m=d.meta,p=d[K].p[T],nx=m.lon.length,ny=m.lat.length,F=4,NX=(nx-1)*F+1,NY=(ny-1)*F+1,g=new Array(NX*NY);
+ for(let j=0;j<NY;j++)for(let i=0;i<NX;i++)g[(NY-1-j)*NX+i]=sample(p,m.lon[0]+i*0.5/F,m.lat[0]+j*0.5/F,m);
+ const lo=Math.floor(Math.min(...g)/4)*4,hi=Math.ceil(Math.max(...g)/4)*4,th=[];for(let q=lo;q<=hi;q+=4)th.push(q);
+ const cs=d3.contours().size([NX,NY]).thresholds(th)(g);ctx.strokeStyle='rgba(26,29,33,.7)';ctx.lineWidth=1;ctx.font='10px IBM Plex Mono';const sx=MW/(NX-1),sy=MH/(NY-1);
+ for(const c of cs){let lab=null;for(const poly of c.coordinates)for(const ring of poly){ctx.beginPath();ring.forEach(([x,y],i)=>{const X=(x-.5)*sx,Y=(y-.5)*sy;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);if(!lab&&X>30&&X<MW-30&&Y>20&&Y<MH-20&&i%40==20)lab=[X,Y]});ctx.stroke()}
+  if(lab){ctx.fillStyle='rgba(255,255,255,.85)';ctx.fillRect(lab[0]-14,lab[1]-7,28,13);ctx.fillStyle='#1a1d21';ctx.fillText(c.value,lab[0]-12,lab[1]+4)}}
+ $('#when').textContent=m.time[T].replace('T',' ')+' UTC'}
+function draw(){drawField();drawOver();$('#parts').getContext('2d').clearRect(0,0,MW,MH)}
+function step(){const d=data(),c=$('#parts').getContext('2d');c.globalCompositeOperation='destination-in';c.fillStyle='rgba(0,0,0,.93)';c.fillRect(0,0,MW,MH);c.globalCompositeOperation='source-over';
+ if(d){const m=d.meta,u=d[K].u[T],v=d[K].v[T],k=0.0022;c.strokeStyle='rgba(255,255,255,.75)';c.lineWidth=1;c.beginPath();
+  for(const q of parts){const uu=sample(u,q.lon,q.lat,m),vv=sample(v,q.lon,q.lat,m);if(uu==null||q.age>90){Object.assign(q,rnd(),{age:0});continue}
+   const x0=fx(q.lon),y0=fy(q.lat);q.lon+=uu*k/Math.cos(q.lat*Math.PI/180);q.lat+=vv*k;q.age++;c.moveTo(x0,y0);c.lineTo(fx(q.lon),fy(q.lat))}c.stroke()}
+ requestAnimationFrame(step)}
+let last=0;function tick(ts){if(storm&&playing&&ts-last>700){last=ts;T=(T+1)%storm.meta.time.length;$('#t').value=T;drawField();drawOver()}requestAnimationFrame(tick)}
+$('#src').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;K=b.dataset.k;document.querySelectorAll('#src button').forEach(x=>x.classList.toggle('on',x==b));draw()};
+$('#t').oninput=e=>{T=+e.target.value;playing=false;$('#play').textContent='Play';drawField();drawOver()};
+$('#play').onclick=()=>{playing=!playing;$('#play').textContent=playing?'Pause':'Play'};
+$('#mapwrap').onmousemove=e=>{const d=data();if(!d)return;const r=e.currentTarget.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,lon=LON0+x/MW*(LON1-LON0),lat=LAT1-y/MH*(LAT1-LAT0);
+ const u=sample(d[K].u[T],lon,lat,d.meta),v=sample(d[K].v[T],lon,lat,d.meta),p=sample(d[K].p[T],lon,lat,d.meta),tip=$('#tip');if(u==null){tip.style.display='none';return}
+ tip.style.display='block';tip.style.left=Math.min(x+12,MW-150)+'px';tip.style.top=(y+12)+'px';tip.innerHTML=`${Math.hypot(u,v).toFixed(1)} m/s &middot; ${p.toFixed(0)} hPa`};
+$('#mapwrap').onmouseleave=()=>$('#tip').style.display='none';
+Promise.all([fetch('data/coast.json').then(r=>r.json()),fetch('data/storm_easter2026.json').then(r=>r.json())]).then(([c,s])=>{coast=c;storm=s;$('#t').max=s.meta.time.length-1;
+ document.querySelectorAll('#src button').forEach(b=>b.disabled=!s[b.dataset.k]);resize();requestAnimationFrame(step);requestAnimationFrame(tick)});
+addEventListener('resize',()=>{if(storm)resize()});
+</script>
+</body></html>

@@ -1,0 +1,57 @@
+/* alternatives for dk-forecast sections 1, 2 and 5 (projects-b4, 30 Oct 2026); light mode only */
+:root{color-scheme:light;--yr:#0f766e;--dmi:#475569}
+[hidden]{display:none!important}
+.wrap{padding-bottom:150px}
+.opt-tag{display:inline-block;font:600 12px/1.2 var(--sans);color:#7c2d12;border:1px dashed #c2410c;border-radius:4px;padding:4px 8px;margin:10px 0 8px;background:#fff7ed}
+body.notags .opt-tag{display:none}
+.axnote{font-size:12px;color:var(--soft);margin:4px 0 0}
+
+/* section 2, option A: matrix */
+.mx{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--rule);border-radius:14px;margin:12px 0}
+.mx th,.mx td{padding:12px 14px;border-top:1px solid var(--rule);text-align:left;vertical-align:top}
+.mx thead th{border-top:0;font:600 14px var(--sans)}
+.mx thead th small{display:block;font-weight:400;color:var(--soft);font-size:12px}
+.mx tbody th{font:600 15px var(--sans);width:24%}
+.mx tbody th small{display:block;font-weight:400;color:var(--soft);font-size:12px}
+.mx .pct{font:600 26px/1 var(--serif);color:var(--ours)}
+.mx .pct span{font:400 13px var(--sans);color:var(--soft);margin-left:4px}
+.mx .bar{height:6px;background:var(--panel);border-radius:3px;margin:8px 0 6px;max-width:220px}
+.mx .bar i{display:block;height:6px;border-radius:3px;background:var(--ours)}
+.mx .raw{font:12px var(--mono);color:var(--soft)}
+.mx .none{color:var(--faint);font-size:14px;font-style:italic}
+@media (max-width:560px){.mx th,.mx td{padding:10px 8px}.mx .pct{font-size:22px}.mx .pct span{display:block;margin-top:4px}}
+
+/* section 2, option C: two scorecards */
+.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0}
+.sc{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:14px 16px}
+.sc h3{font:600 19px var(--serif);margin:0}
+.sc .who{font-size:13px;color:var(--soft);margin:2px 0 10px}
+.sc .row{display:grid;grid-template-columns:96px 1fr 44px;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--rule);font-size:14px;cursor:default}
+.sc .row .tr{height:12px;background:var(--panel);border-radius:6px;overflow:hidden}
+.sc .row .tr i{display:block;height:12px;background:var(--ours);border-radius:6px}
+.sc .row b{font:600 16px var(--sans);color:var(--ours);text-align:right}
+.sc .row .none{grid-column:2/4;color:var(--faint);font-style:italic;font-size:13px}
+
+/* section 5 */
+.livehead{font:500 14px/1.45 var(--sans);margin:4px 0 6px;hyphens:manual}
+.livehead b{color:var(--ours)}
+.board{margin:6px 0 4px}
+.board .big{font:600 34px/1 var(--serif);color:var(--ours)}
+.board .big span{font:400 14px var(--sans);color:var(--soft);margin-left:6px}
+.board ol{list-style:none;padding:0;margin:10px 0 6px}
+.board li{display:grid;grid-template-columns:22px 1fr 1fr 52px;gap:8px;align-items:center;font-size:13px;padding:4px 0;border-top:1px solid var(--rule)}
+.board li .tr{height:8px;background:var(--panel);border-radius:4px}
+.board li .tr i{display:block;height:8px;border-radius:4px;background:var(--bar)}
+.board li.me{font-weight:600;color:var(--ours)} .board li.me .tr i{background:var(--ours)}
+.board li.en .tr i{background:var(--ref)}
+.board li span:last-child{text-align:right;font-family:var(--mono);font-size:12px}
+
+/* picker */
+#picker{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:20;background:#1a1d21;color:#fff;border-radius:12px;padding:8px 10px;font:12.5px/1.2 var(--sans);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.2);width:max-content;max-width:calc(100vw - 20px)}
+#picker .grp{display:flex;align-items:center;gap:4px}
+#picker .grp>span{color:#c9cfd6;margin-right:3px}
+#picker button{background:transparent;color:#fff;border:1px solid #5b6470;border-radius:6px;padding:5px 9px;cursor:pointer;font:inherit}
+#picker button:hover{border-color:#fff}
+#picker button[aria-pressed=true]{background:#c2410c;border-color:#c2410c}
+#picker{display:none!important}
+.opt-tag{display:none!important}

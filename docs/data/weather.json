@@ -9,10 +9,6 @@
     "ours": true
    },
    {
-    "name": "Average of all models, each in its best version",
-    "val": 1.5925
-   },
-   {
     "name": "ECMWF AIFS (AI)",
     "val": 1.6776,
     "how": "boosted correction"
@@ -61,10 +57,6 @@
     "name": "DMI HARMONIE",
     "val": 1.7716,
     "how": "boosted correction"
-   },
-   {
-    "name": "Average of all models",
-    "val": 1.8523
    }
   ]
  },
@@ -76,14 +68,6 @@
     "name": "DKcast",
     "val": 0.8571,
     "ours": true
-   },
-   {
-    "name": "Average of all models, each in its best version",
-    "val": 0.9727
-   },
-   {
-    "name": "Average of all models",
-    "val": 0.9812
    },
    {
     "name": "DWD ICON-D2",
@@ -142,14 +126,6 @@
     "ours": true
    },
    {
-    "name": "Average of all models, each in its best version",
-    "val": 14.1108
-   },
-   {
-    "name": "Average of all models",
-    "val": 15.0122
-   },
-   {
     "name": "DWD ICON-D2",
     "val": 15.1459,
     "how": "zero-preserving correction"
@@ -206,10 +182,6 @@
     "ours": true
    },
    {
-    "name": "Average of all models, each in its best version",
-    "val": 0.044
-   },
-   {
     "name": "UK Met Office",
     "val": 0.0485,
     "how": "straight-line correction"
@@ -248,10 +220,6 @@
     "name": "KNMI HARMONIE",
     "val": 0.0505,
     "how": "straight-line correction"
-   },
-   {
-    "name": "Average of all models",
-    "val": 0.0509
    },
    {
     "name": "NOAA GFS",

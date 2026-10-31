@@ -112,7 +112,7 @@ function s1C() {
     el("text", {x: R + 10, y: yc + 5, "font-size": sm ? 12 : 13.5, "font-weight": 600, fill: "#c2410c"}, S, `${s}% less`);
   });
   const w = sk.slice(0, 4), en = ENERGY.rows.find(r => r.name == "Energinet day-ahead"), mp = ENERGY.rows.find(isMe);
-  $("#s1Cans").innerHTML = `DKcast was <b>${Math.min(...w)} to ${Math.max(...w)}% better than the best public forecast</b> on all four variables (less error on wind, temperature and sunshine; better at calling rain or no rain), and my power ` +
+  $("#s1Cans").innerHTML = `DKcast was <b>${Math.min(...w)} to ${Math.max(...w)}% better than the best public model</b> on all four variables (less error on wind, temperature and sunshine; better at calling rain or no rain), and my power ` +
     `model fed by it had ${Math.round(100 * (1 - mp.val / en.val))}% less than Energinet's day-ahead forecast.`;
   $("#s1Ccap").textContent = "Each row is one variable. The dashed line is the best public forecast for that variable, set to 100%; grey dots are the other " +
     "public models, the blue one is ECMWF IFS and the orange one is DKcast, all scored on the same hours from 1 January to 18 October 2026. " +

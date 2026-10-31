@@ -1,1 +1,263 @@
-{"wind": {"unit": "m/s", "metric": "error (RMSE)", "rows": [{"name": "DKcast", "val": 1.408, "ours": true}, {"name": "DWD ICON-EU", "val": 1.679}, {"name": "yr.no (MET Nordic)", "val": 1.6812777478478635}, {"name": "DWD ICON-D2", "val": 1.704}, {"name": "ECMWF IFS", "val": 1.708}, {"name": "Canada GEM", "val": 1.711}, {"name": "ECMWF AIFS (AI)", "val": 1.719}, {"name": "NOAA GFS", "val": 1.753}, {"name": "UK Met Office", "val": 1.776}, {"name": "KNMI HARMONIE", "val": 1.853}, {"name": "Average of all models", "val": 1.859}, {"name": "DMI HARMONIE", "val": 1.861}]}, "temp": {"unit": "\u00b0C", "metric": "error (RMSE)", "rows": [{"name": "DKcast", "val": 0.857, "ours": true}, {"name": "Average of all models", "val": 0.981}, {"name": "DWD ICON-EU", "val": 1.122}, {"name": "MET Norway (via Open-Meteo)", "val": 1.156}, {"name": "DWD ICON-D2", "val": 1.167}, {"name": "yr.no (MET Nordic)", "val": 1.1857041556186665}, {"name": "DMI HARMONIE", "val": 1.228}, {"name": "ECMWF IFS", "val": 1.275}, {"name": "KNMI HARMONIE", "val": 1.28}, {"name": "ECMWF AIFS (AI)", "val": 1.299}, {"name": "NOAA GFS", "val": 1.512}, {"name": "UK Met Office", "val": 1.969}]}, "sun": {"unit": "min/h", "metric": "error (RMSE)", "rows": [{"name": "DKcast", "val": 12.684, "ours": true}, {"name": "Average of all models", "val": 15.012}, {"name": "DWD ICON-D2", "val": 15.41}, {"name": "DWD ICON-EU", "val": 15.709}, {"name": "ECMWF IFS", "val": 15.974}, {"name": "MET Norway (via Open-Meteo)", "val": 16.011}, {"name": "KNMI HARMONIE", "val": 16.108}, {"name": "ECMWF AIFS (AI)", "val": 16.444}, {"name": "NOAA GFS", "val": 18.002}, {"name": "DMI HARMONIE", "val": 18.942}, {"name": "UK Met Office", "val": 21.519}]}, "rain": {"unit": "Brier", "metric": "Brier score", "rows": [{"name": "DKcast", "val": 0.0412, "ours": true}, {"name": "ECMWF IFS", "val": 0.0488}, {"name": "ECMWF AIFS (AI)", "val": 0.0488}, {"name": "UK Met Office", "val": 0.0493}, {"name": "DWD ICON-EU", "val": 0.0497}, {"name": "MET Norway (via Open-Meteo)", "val": 0.0497}, {"name": "DWD ICON-D2", "val": 0.0502}, {"name": "DMI HARMONIE", "val": 0.0502}, {"name": "KNMI HARMONIE", "val": 0.0506}, {"name": "Average of all models", "val": 0.0511}, {"name": "yr.no (MET Nordic)", "val": 0.0511055334935346}, {"name": "NOAA GFS", "val": 0.0515}]}}
+{
+ "wind": {
+  "unit": "m/s",
+  "metric": "error (RMSE)",
+  "rows": [
+   {
+    "name": "DKcast",
+    "val": 1.4189,
+    "ours": true
+   },
+   {
+    "name": "Average of all models, each in its best version",
+    "val": 1.5925
+   },
+   {
+    "name": "ECMWF AIFS (AI)",
+    "val": 1.6776,
+    "how": "boosted correction"
+   },
+   {
+    "name": "ECMWF IFS",
+    "val": 1.6882,
+    "how": "boosted correction"
+   },
+   {
+    "name": "Canada GEM",
+    "val": 1.6897,
+    "how": "boosted correction"
+   },
+   {
+    "name": "DWD ICON-EU",
+    "val": 1.6904,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "DWD ICON-D2",
+    "val": 1.7131,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "NOAA GFS",
+    "val": 1.7292,
+    "how": "boosted correction"
+   },
+   {
+    "name": "UK Met Office",
+    "val": 1.7478,
+    "how": "boosted correction"
+   },
+   {
+    "name": "KNMI HARMONIE",
+    "val": 1.7601,
+    "how": "boosted correction"
+   },
+   {
+    "name": "yr.no (MET Nordic)",
+    "val": 1.7707,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "DMI HARMONIE",
+    "val": 1.7716,
+    "how": "boosted correction"
+   },
+   {
+    "name": "Average of all models",
+    "val": 1.8523
+   }
+  ]
+ },
+ "temp": {
+  "unit": "\u00b0C",
+  "metric": "error (RMSE)",
+  "rows": [
+   {
+    "name": "DKcast",
+    "val": 0.8571,
+    "ours": true
+   },
+   {
+    "name": "Average of all models, each in its best version",
+    "val": 0.9727
+   },
+   {
+    "name": "Average of all models",
+    "val": 0.9812
+   },
+   {
+    "name": "DWD ICON-D2",
+    "val": 1.1004,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "DWD ICON-EU",
+    "val": 1.122,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "yr.no (MET Nordic)",
+    "val": 1.1555,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "DMI HARMONIE",
+    "val": 1.2278,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "KNMI HARMONIE",
+    "val": 1.234,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "ECMWF AIFS (AI)",
+    "val": 1.2446,
+    "how": "boosted correction"
+   },
+   {
+    "name": "ECMWF IFS",
+    "val": 1.2749,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "UK Met Office",
+    "val": 1.3444,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "NOAA GFS",
+    "val": 1.5123,
+    "how": "straight-line correction"
+   }
+  ]
+ },
+ "sun": {
+  "unit": "min/h",
+  "metric": "error (RMSE)",
+  "rows": [
+   {
+    "name": "DKcast",
+    "val": 12.6843,
+    "ours": true
+   },
+   {
+    "name": "Average of all models, each in its best version",
+    "val": 14.1108
+   },
+   {
+    "name": "Average of all models",
+    "val": 15.0122
+   },
+   {
+    "name": "DWD ICON-D2",
+    "val": 15.1459,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "DWD ICON-EU",
+    "val": 15.495,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "KNMI HARMONIE",
+    "val": 15.6002,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "yr.no (MET Nordic)",
+    "val": 15.6031,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "ECMWF IFS",
+    "val": 15.8666,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "ECMWF AIFS (AI)",
+    "val": 16.3581,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "UK Met Office",
+    "val": 16.6407,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "NOAA GFS",
+    "val": 17.8023,
+    "how": "zero-preserving correction"
+   },
+   {
+    "name": "DMI HARMONIE",
+    "val": 17.9642,
+    "how": "boosted correction"
+   }
+  ]
+ },
+ "rain": {
+  "unit": "Brier",
+  "metric": "Brier score",
+  "rows": [
+   {
+    "name": "DKcast",
+    "val": 0.0412,
+    "ours": true
+   },
+   {
+    "name": "Average of all models, each in its best version",
+    "val": 0.044
+   },
+   {
+    "name": "UK Met Office",
+    "val": 0.0485,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "ECMWF IFS",
+    "val": 0.0488,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "ECMWF AIFS (AI)",
+    "val": 0.049,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "DWD ICON-EU",
+    "val": 0.0499,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "yr.no (MET Nordic)",
+    "val": 0.0499,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "DMI HARMONIE",
+    "val": 0.0503,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "DWD ICON-D2",
+    "val": 0.0503,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "KNMI HARMONIE",
+    "val": 0.0505,
+    "how": "straight-line correction"
+   },
+   {
+    "name": "Average of all models",
+    "val": 0.0509
+   },
+   {
+    "name": "NOAA GFS",
+    "val": 0.0514,
+    "how": "straight-line correction"
+   }
+  ]
+ }
+}

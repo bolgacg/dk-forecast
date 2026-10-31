@@ -68,12 +68,12 @@ footer{margin-top:44px;border-top:1px solid var(--rule);padding-top:14px;font-si
 <div class="card"><div data-group="s1" data-opt="cur"><svg id="bars"></svg></div><div data-group="s1" data-opt="a"><svg id="s1A"></svg></div><div data-group="s1" data-opt="b"><svg id="s1B"></svg><p class="axnote">The axis is zoomed in and does not start at zero, so the gaps look larger than they would on a bar chart.</p></div><div data-group="s1" data-opt="c"><svg id="s1C"></svg><p class="cap" id="s1Ccap" style="margin:6px 0 0"></p></div><p class="cap" id="barcap" style="margin:6px 0 0" data-group="s1" data-opt="cur a b"></p></div>
 
 <h2><span class="n">2</span>And against yr.no and DMI?</h2>
-<p class="ans">DKcast had <b>16 to 28% less error than yr.no's forecast</b> and <b>24 to 33% less than DMI's HARMONIE</b> on wind, temperature and sunshine, and called rain or no rain 18 to 19% better than both. Each was given its own correction per station first.</p>
+<p class="ans">DKcast had <b>19 to 26% less error than yr.no's forecast</b> and <b>20 to 30% less than DMI's HARMONIE</b> on wind, temperature and sunshine, and called rain or no rain 17 to 18% better than both. Each is shown in its best version: as issued, or with one of five corrections fitted on 2025, whichever scored best for it on the test.</p>
 <div data-group="s2" data-opt="cur"><div class="grid" id="kpis"></div></div>
 <div data-group="s2" data-opt="a"><div id="s2A"></div></div>
 <div data-group="s2" data-opt="b"><div class="card"><svg id="s2B"></svg><p class="cap" id="s2Bcap" style="margin:6px 0 0"></p></div></div>
 <div data-group="s2" data-opt="c"><div id="s2C"></div></div>
-<p class="cap">yr.no is MET Norway's 1 km post-processed forecast as issued (the MET Nordic archive). It has no sunshine forecast, so sunshine is compared with DMI only. Error is the typical miss at the DMI station, on the same hours for every model.</p>
+<p class="cap">yr.no is MET Norway's 1 km Nordic forecast (MET Nordic, as issued the day before, via Open-Meteo). Error is the typical miss at the DMI station, on the same hours for every model.</p>
 
 <h2><span class="n">3</span>How did I do it?</h2>
 <p class="ans">By not choosing a model: DKcast reads all of them at once and learns, station by station, which one to trust in which weather.</p>
@@ -110,7 +110,7 @@ function el(n,a,p,t){const e=document.createElementNS(NS,n);for(const k in a)e.s
 const G=$("#gtip");function tipOn(e,html){G.innerHTML=html;G.style.display="block";G.style.left=Math.min(e.clientX+12,innerWidth-G.offsetWidth-8)+"px";G.style.top=(e.clientY-G.offsetHeight-10)+"px"}
 function tipOff(){G.style.display="none"}
 // ---------- 1. results bars with weather / energy toggle
-const ENERGY={unit:"% of capacity",metric:"error, % of installed capacity",rows:[{name:"My power model, fed by DKcast",val:5.56,ours:true},{name:"4-model average (my first model)",val:6.24},{name:"ECMWF IFS",val:6.60},{name:"Energinet day-ahead",val:6.68}]};
+const ENERGY={unit:"% of capacity",metric:"error, % of installed capacity",rows:[{name:"My power model, fed by DKcast",val:5.56,ours:true},{name:"4-model average (my first model)",val:6.24},{name:"ECMWF IFS",val:6.60},{name:"Energinet day-ahead",val:6.55,how:"quantile mapped, its toughest version"}]};
 const VN={wind:"wind speed",temp:"temperature",sun:"sunshine",rain:"rain (will it rain this hour?)"};
 let W=null,mode="weather",v="wind";
 function bars(){const B=$("#bars");B.innerHTML="";const d=mode=="energy"?ENERGY:W[v],rows=d.rows,max=Math.max(...rows.map(r=>r.val))*1.12,sm=B.parentNode.clientWidth<560,VW=sm?380:640,L=sm?150:200,R=VW-60,h=30;
@@ -121,16 +121,16 @@ function bars(){const B=$("#bars");B.innerHTML="";const d=mode=="energy"?ENERGY:
   el("text",{x:L+w+5,y:y+18,"font-size":sm?11:13,fill:"#5b6470","font-family":"IBM Plex Mono"},B,(d.unit=="Brier"?r.val.toFixed(3):r.val.toFixed(2))+(d.unit=="Brier"||sm?"":" "+d.unit));
   b.addEventListener("pointermove",e=>tipOn(e,`${r.name}<br>${d.metric}: ${d.unit=="Brier"?r.val.toFixed(4):r.val.toFixed(3)+" "+d.unit}`));b.addEventListener("pointerleave",tipOff)});
  const dk=rows[0].val,ifs=rows.find(r=>r.name=="ECMWF IFS").val,best=rows.filter(r=>!(r.ours||r.name=="DKcast"))[0];
- if(mode=="energy"){$("#ans1").innerHTML=`On wind power, my model had <b>17% less error than Energinet's day-ahead forecast</b> and 16% less than ECMWF IFS, over 290 days of 2026, and beat Energinet on 76% of the days.`;
-  $("#barcap").textContent="Average hourly error of Denmark's wind power output (both price areas), 1 January to 18 October 2026, as % of installed capacity. Western Denmark 5.27% against Energinet's 6.19%, eastern Denmark 6.47% against 8.27%. In money, at the real imbalance prices, the error cost 3.01 EUR per MWh against Energinet's 3.33.";}
- else{$("#ans1").innerHTML=`On ${VN[v]}, DKcast had <b>${(100*(1-dk/best.val)).toFixed(0)}% less error than the best public option</b> (${best.name}) and ${(100*(1-dk/ifs)).toFixed(0)}% less than ECMWF IFS.`;
-  $("#barcap").textContent=(v=="rain"?"Brier score of the chance of rain (0.2 mm or more in the hour): lower is better. ":"Typical hourly miss (root mean square error) at DMI stations. ")+"Every public model is given its own correction per station first. 1 January to 18 October 2026, hours DKcast never saw.";}
+ if(mode=="energy"){$("#ans1").innerHTML=`On wind power, my model had <b>15% less error than Energinet's day-ahead forecast</b> in its toughest version (quantile mapped per zone; 17% against the 60-day rescaled version, 45% against it as issued) and 16% less than ECMWF IFS, over 290 days of 2026, and beat Energinet's rescaled forecast on 76% of the days.`;
+  $("#barcap").textContent="Average hourly error of Denmark's wind power output (both price areas), 1 January to 18 October 2026, as % of installed capacity. Energinet is shown quantile mapped per zone, its toughest version. Against its 60-day rescaled forecast: western Denmark 5.27% against 6.19%, eastern Denmark 6.47% against 8.27%; in money, at the real imbalance prices, 3.01 EUR per MWh against 3.33.";}
+ else{$("#ans1").innerHTML=`On ${VN[v]}, DKcast had <b>${(100*(1-dk/best.val)).toFixed(0)}% less error than the best public option</b> (${best.name}${best.how && best.how != "as issued" ? ", " + best.how : ""}) and ${(100*(1-dk/ifs)).toFixed(0)}% less than ECMWF IFS.`;
+  $("#barcap").textContent=(v=="rain"?"Brier score of the chance of rain (0.2 mm or more in the hour): lower is better. ":"Typical hourly miss (root mean square error) at DMI stations. ")+"Every public model is shown in its best version: as issued, or with a straight-line, zero-preserving, quantile-mapped or boosted correction per station fitted on 2025, whichever scored best for it on this test. That hindsight favours the public models, never DKcast. 1 January to 18 October 2026, hours DKcast never saw.";}
  $("#var").style.display=mode=="energy"?"none":"inline-flex"}
 $("#mode").onclick=e=>{const b=e.target.closest("button");if(!b)return;mode=b.dataset.m;document.querySelectorAll("#mode button").forEach(x=>x.classList.toggle("on",x==b));bars()};
 $("#var").onclick=e=>{const b=e.target.closest("button");if(!b)return;v=b.dataset.v;document.querySelectorAll("#var button").forEach(x=>x.classList.toggle("on",x==b));bars()};
 fetch("data/weather.json").then(r=>r.json()).then(d=>{W=d;bars();
  const k=(vv,who)=>{const r=Object.fromEntries(d[vv].rows.map(x=>[x.name,x.val]));return r[who]?Math.round(100*(1-r.DKcast/r[who])):null};
- const items=[["wind","yr.no (MET Nordic)","wind, against yr.no"],["temp","yr.no (MET Nordic)","temperature, against yr.no"],["rain","yr.no (MET Nordic)","rain, against yr.no"],["wind","DMI HARMONIE","wind, against DMI"],["temp","DMI HARMONIE","temperature, against DMI"],["sun","DMI HARMONIE","sunshine, against DMI"],["rain","DMI HARMONIE","rain, against DMI"]];
+ const items=[["wind","yr.no (MET Nordic)","wind, against yr.no"],["temp","yr.no (MET Nordic)","temperature, against yr.no"],["sun","yr.no (MET Nordic)","sunshine, against yr.no"],["rain","yr.no (MET Nordic)","rain, against yr.no"],["wind","DMI HARMONIE","wind, against DMI"],["temp","DMI HARMONIE","temperature, against DMI"],["sun","DMI HARMONIE","sunshine, against DMI"],["rain","DMI HARMONIE","rain, against DMI"]];
  $("#kpis").innerHTML=items.map(([vv,w,l])=>`<div class="kpi"><b>${k(vv,w)}%</b><span>less error on ${l}</span></div>`).join("")});
 // ---------- 5. live league mini chart (published by the live page)
 fetch("https://bolgacg.github.io/dk-wind-live/summary.json").then(r=>r.json()).then(s=>{const t=s.today,S=$("#live");if(!t||!t.series)return;

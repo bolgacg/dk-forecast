@@ -4,7 +4,7 @@
   const B = "https://bolgacg.github.io/", T = B + "dk-forecast/more/";
   const S = [["dk-forecast/", "thumb-forecast.jpg", "The one-page summary", "Can one person forecast Danish weather better than the big public models? DKcast against ECMWF, DMI and yr.no, and the power forecast against Energinet."],
     ["dkcast/", "thumb-dkcast.jpg", "DKcast weather", "Today and tomorrow, hour by hour, at 21 Danish weather stations, and every morning it checks itself against DMI."],
-    ["dk-wind-live/", "thumb-live.jpg", "Live wind power league", "Every morning before the noon market close, my wind power forecast against Energinet's and the public models', ranked once the day is measured."],
+    ["dk-wind-live/", "thumb-live.jpg", "Live wind power league", "Each day, my wind power forecast against Energinet's and the public models', ranked once the day is measured."],
     ["dk-wind-blend/", "thumb-study.jpg", "The public models compared", "Storm maps and station scores for the public weather models."]];
   const here = location.pathname.split("/").filter(Boolean)[0] + "/";
   const box = document.createElement("section");
